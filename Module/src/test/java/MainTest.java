@@ -41,18 +41,16 @@ class MainTest {
 
     @Test
     void comesBefore(){
-        assertEquals(true, Main.comesBefore(1, 1, 2025, 1, 1, 2025));
-        assertEquals(true, Main.comesBefore(20, 12, 2024, 1, 1, 2025));
-        assertEquals(false, Main.comesBefore(1, 1, 2026, 31, 12, 2025));
+        assertEquals(true, Main.comesBefore(new Main.date(1,1,2025),new Main.date(1,1,2025) ));
+        assertEquals(true, Main.comesBefore(new Main.date(20,12,2024),new Main.date(1,1,2025)));
+        assertEquals(false, Main.comesBefore(new Main.date(1,1,2026),new Main.date(31,12,2025)));
     }
     @Test
     void invalidDates() {
-
-
         assertThrows(IllegalArgumentException.class, () -> {new Main.date(32, 1, 2025);});
-
         assertThrows(IllegalArgumentException.class, () -> {new Main.date(0, 1, 2025);});
     }
+
 
 
 }

@@ -17,6 +17,8 @@ public class Main {
         }
     }
 
+
+
     date date1 = new date(22, 1, 2008);
     date date2 = new date(2, 12, 2001);
     date date3 = new date(19, 12, 21);
@@ -156,24 +158,24 @@ public class Main {
     }
 
 
-    public static boolean comesBefore(int day1, int month1, int year1, int day2, int month2, int year2) {
-        if (year1 == year2) {
-            if (month1 == month2) {
-                if (day1 < day2 || day1 == day2) {
+    public static boolean comesBefore(date date1, date date2) {
+        if (date1.year == date2.year) {
+            if (date1.month == date2.month) {
+                if (date1.date < date2.date || date1.date == date2.date) {
                     return true;
                 }
                 else{
                     return false;
                 }
             }
-            else if (month1 < month2) {
+            else if (date1.month < date2.month) {
                     return true;
             }
             else{
                 return false;
             }
         }
-        else if (year1 < year2) {
+        else if (date1.year < date2.year) {
                 return true;
 
         } else {
@@ -182,6 +184,107 @@ public class Main {
 
 
     }
+    public record date_interval(date start, date end){
+        public date_interval{
+            if (comesBefore(this.start(), this.end())==false){
+                throw new  IllegalArgumentException("The starting date comes after the end date");
+            }
+        }
+    }
+    public record maybe_date_interval (date start, date end){
+
+        public maybe_date_interval{
+            if (comesBefore(this.start(),this.end())==false){
+                throw new  IllegalArgumentException("The starting date comes after the end date");
+            }
+        }
+    }
+    date_interval ex1 = new date_interval(
+            new date(1, 2, 2018),
+            new date(2, 3, 2018)
+    );
+
+    date_interval ex2 = new date_interval(
+            new date(10, 5, 2020),
+            new date(15, 5, 2020)
+    );
+
+    date_interval ex3 = new date_interval(
+            new date(20, 7, 2022),
+            new date(5, 8, 2022)
+    );
+
+    public static int dateIntervalDays( date_interval dates){
+        int interval_1=daysOfYear(dates.start().date(), dates.start().month());
+        int interval_2=daysOfYear(dates.end().date(), dates.end().month());
+
+        return interval_2-interval_1;
+
+    }
+
+    public static boolean dateOverLap(date_interval interval1, date_interval interval2){
+        if (comesBefore(interval2.start(),interval1.end())){
+            return true;
+        } else if (comesBefore(interval1.start(), interval2.end())) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    public static date_interval dateIntervalIntersect(date_interval interval1, date_interval interval2){
+        if (dateOverLap(interval1, interval2)==false){
+            return null;
+        }
+        date start;
+        date end;
+
+        if (comesBefore(interval1.start(),interval2.start())){
+            start=interval2.start();
+        }
+        else{
+            start=interval1.start();
+        }
+        if(comesBefore(interval1.end(),interval2.end())){
+            end=interval1.end();
+        }
+        else{
+            end=interval2.end();
+        }
+        return new date_interval(start,end);
+    }
+
+    public record date_list(date first, date_list rest){
+    }
+
+    public static int listLen(date_list lst){
+        switch (lst){
+            case null:
+                return 0;
+            case date_list(date first, date_list rest):
+                return 1 + listLen(rest);
+
+        }
+    }
+
+    public static date minDate(date_list list){
+
+        switch(list){
+            case null:
+                throw new IllegalArgumentException("error");
+            case date_list(date first, date_list rest):
+               if (rest==null){
+                   return first;
+               }
+                if (comesBefore(first,minDate(rest))){
+                   return first;
+               }else {
+                   return minDate(rest);
+               }
+        }
+    }
+
+
 
 
 
